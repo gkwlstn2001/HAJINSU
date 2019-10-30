@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.beans.coffee.dao.CommentsDao">
+
+	<insert id="commentswrite" parameterType="com.beans.coffee.dto.CommentsDto">
+	INSERT INTO COMMENTS
+	(COMMENTSID,BBSID,EMAIL,COMMENTS,COMMENTSDATE)
+	VALUES (COMMENTSID.NEXTVAL,#{BBSID},#{EMAIL},#{COMMENTS},SYSDATE)
+	</insert>
+	
+	<select id="commentsview" resultType="com.beans.coffee.dto.CommentsDto" parameterType="com.beans.coffee.dto.CommentsDto">
+	SELECT * FROM COMMENTS WHERE BBSID=#{BBSID} ORDER BY COMMENTSDATE DESC
+	</select>
+	
+	<update id="commentsupdate" parameterType="com.beans.coffee.dto.CommentsDto">
+	UPDATE COMMENTS SET
+	EMAIL=#{EMAIL},COMMENTS=#{COMMENTS},COMMENTSDATE=SYSDATE
+	WHERE BBSID=#{BBSID}
+	</update>
+	
+</mapper>

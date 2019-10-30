@@ -1,0 +1,55 @@
+package com.beans.coffee.controller;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.json.JSONArray;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.beans.coffee.dto.CommentsDto;
+import com.beans.coffee.service.CommentsService;
+
+@Controller
+public class CommentsViewController {
+	
+	@Autowired
+	CommentsService commentsservice;
+	
+	@RequestMapping(value="commentsviewok", produces="application/json; charset=utf8", method=RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity<CommentsDto> commentsviewok(CommentsDto commentsdto,HttpServletRequest req,HttpSession session) throws Exception {
+		
+		HttpHeaders responseHeaders = new HttpHeaders();
+        ArrayList<HashMap<String,String>> hmlist = new ArrayList<HashMap<String,String>>();
+		
+		List<CommentsDto> commentslist = commentsservice.commentsview(commentsdto);
+			
+		if(commentslist.size() > 0)	{
+            for(int i=0; i<commentslist.size(); i++){
+                HashMap<String,String> hm = new HashMap<String,String>();
+                hm.put("COMMENTSID", commentslist.get(i).getCOMMENTSID());
+                hm.put("BBSID", commentslist.get(i).getBBSID());
+                hm.put("EMAIL", commentslist.get(i).getEMAIL());
+                hm.put("COMMENTSDATE", commentslist.get(i).getCOMMENTSDATE());
+                hm.put("COMMENTS", commentslist.get(i).getCOMMENTS());
+                hm.put("SessionEMAIL",(String)session.getAttribute("SessionEMAIL"));
+                
+                hmlist.add(hm);
+            }
+        }
+		
+		JSONArray json = new JSONArray(hmlist);
+        return new ResponseEntity(json.toString(), responseHeaders, HttpStatus.CREATED);
+	}
+}

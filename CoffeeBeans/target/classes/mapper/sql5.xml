@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.beans.coffee.dao.AdminPageDao">
+
+	<select id="allboardview" resultType="com.beans.coffee.dto.BbsDto">
+	SELECT * FROM BBS ORDER BY WRITEDATE DESC, BBSID DESC
+	</select>
+	
+	<select id="allregister" resultType="com.beans.coffee.dto.RegisterDto">
+	SELECT * FROM REGISTER
+	</select>
+	
+	<select id="countemaillist" resultType="com.beans.coffee.dto.BbsDto" parameterType="com.beans.coffee.dto.BbsDto">
+	SELECT EMAIL FROM BBS 
+	GROUP BY EMAIL
+	HAVING EMAIL IN (SELECT EMAIL FROM BBS GROUP BY EMAIL HAVING COUNT(EMAIL) >= 30) 
+	AND EMAIL IN (SELECT EMAIL FROM COMMENTS GROUP BY EMAIL HAVING COUNT(EMAIL) >= 50)
+	</select>
+	
+	<select id="countboard" resultType="com.beans.coffee.dto.BbsDto">
+	SELECT EMAIL,COUNT(EMAIL) AS VIEWSCOUNT
+	FROM BBS
+	GROUP BY EMAIL
+	</select>
+	
+	<select id="countcomments" resultType="com.beans.coffee.dto.CommentsDto">
+	SELECT EMAIL,COUNT(EMAIL) AS COMMENTS
+	FROM COMMENTS
+	GROUP BY EMAIL
+	</select>
+	
+	<select id="mycontent" resultType="com.beans.coffee.dto.BbsDto" parameterType="String">
+	SELECT * FROM BBS
+	WHERE EMAIL=#{EMAIL}
+	</select>
+	
+	<select id="myregisterinfo" resultType="com.beans.coffee.dto.RegisterDto" parameterType="String">
+	SELECT *
+	FROM REGISTER
+	WHERE EMAIL=#{EMAIL}
+	</select>
+	
+	<select id="mycomments" resultType="com.beans.coffee.dto.CommentsDto" parameterType="String">
+	SELECT *
+	FROM COMMENTS
+	WHERE EMAIL=#{EMAIL}
+	</select>
+	
+</mapper>

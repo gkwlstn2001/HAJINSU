@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.beans.coffee.dao.VocDao">
+	
+	<insert id="vocwriteok" parameterType="com.beans.coffee.dto.VocDto">
+	INSERT INTO VOC
+	(VOCID,EMAIL,VOCWRITEDATE,VOCVIEWSCOUNT,TITLE,CONTENT)
+	VALUES (VOCID.NEXTVAL,#{EMAIL},SYSDATE,0,#{TITLE},#{CONTENT})
+	</insert>
+	
+	<insert id="vocfileok" parameterType="com.beans.coffee.dto.VocFileDto">
+	INSERT INTO VOC_FILE
+	(VOCFILEID,VOCID,VOCORIGINALFILENAME,VOCSAVEFILENAME)
+	VALUES (VOCFILEID.NEXTVAL,(SELECT MAX(VOCID) FROM VOC WHERE VOCWRITEDATE = (SELECT MAX(VOCWRITEDATE) FROM VOC)),
+	#{VOCORIGINALFILENAME},#{VOCSAVEFILENAME})
+	</insert>
+	
+	<select id="vocview" resultType="com.beans.coffee.dto.VocDto">
+	SELECT VOCID,EMAIL,VOCWRITEDATE,VOCVIEWSCOUNT,SUBSTR(TITLE,1,19) AS TITLE,SUBSTR(CONTENT,1,99) AS CONTENT
+	FROM VOC
+	ORDER BY VOCWRITEDATE DESC
+	</select>
+	
+	<select id="vocfileview2" resultType="com.beans.coffee.dto.VocFileDto">
+	SELECT VOCID,SUBSTR(VOCSAVEFILENAME,INSTR(VOCSAVEFILENAME,'UPLOAD/'),200) AS VOCSAVEFILENAME
+	FROM VOC_FILE
+	</select>
+	
+	<update id="vocviewcountup" parameterType="String">
+	UPDATE VOC SET VOCVIEWSCOUNT = VOCVIEWSCOUNT + 1 WHERE VOCID = #{VOCID}
+	</update>
+	
+	<select id="voc" resultType="com.beans.coffee.dto.VocDto" parameterType="String">
+	SELECT * FROM VOC WHERE VOCID=#{VOCID}
+	</select>
+	
+	<select id="vocfile" resultType="com.beans.coffee.dto.VocFileDto" parameterType="String">
+	SELECT VOCFILEID,VOCID,VOCORIGINALFILENAME,SUBSTR(VOCSAVEFILENAME,INSTR(VOCSAVEFILENAME,'resources'),200) AS VOCSAVEFILENAME
+	FROM VOC_FILE
+	WHERE VOCID=#{VOCID}
+	</select>
+	
+	<update id="vocwriteupdateok" parameterType="com.beans.coffee.dto.VocDto">
+	UPDATE VOC SET
+	VOCWRITEDATE=SYSDATE,VOCVIEWSCOUNT=0,
+	TITLE=#{TITLE},CONTENT=#{CONTENT}
+	WHERE VOCID=#{VOCID}
+	</update>
+	
+	<update id="vocfileupdateok" parameterType="com.beans.coffee.dto.VocFileDto">
+	UPDATE VOC_FILE SET
+	VOCORIGINALFILENAME=#{VOCORIGINALFILENAME},VOCSAVEFILENAME=#{VOCSAVEFILENAME}
+	WHERE VOCID=#{VOCID}
+	</update>
+	
+	<delete id="deletevoccontent" parameterType="String">
+	DELETE FROM VOC
+	WHERE VOCID=#{VOCID}
+	</delete>
+	
+	<delete id="deletevocfile" parameterType="String">
+	DELETE FROM VOC_FILE
+	WHERE VOCID=#{VOCID}
+	</delete>
+	
+	<delete id="deletefile" parameterType="com.beans.coffee.dto.RegisterDto">
+	DELETE FROM VOC_FILE
+	WHERE VOCID IN (SELECT VOCID FROM VOC WHERE EMAIL=#{EMAIL})
+	</delete>
+	
+	<delete id="deletevoc" parameterType="com.beans.coffee.dto.RegisterDto">
+	DELETE FROM VOC
+	WHERE EMAIL=#{EMAIL}
+	</delete>
+		
+</mapper>

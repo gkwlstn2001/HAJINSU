@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.beans.coffee.dao.RegisterDao">
+
+	<insert id="RegisterAdd" parameterType="com.beans.coffee.dto.RegisterDto">
+    INSERT INTO REGISTER (
+	    EMAIL,PASSWORD,FULLNAME,ADDRESS,PHONENUMBER)
+	VALUES (
+		#{EMAIL},#{PASSWORD},#{FULLNAME},#{ADDRESS},#{PHONENUMBER}
+	)
+    </insert>
+    
+    <select id="registerLogin" resultType="String" parameterType = "HashMap"> 
+	SELECT PASSWORD FROM REGISTER
+	WHERE EMAIL = #{EMAIL} AND PASSWORD = #{PASSWORD}
+	</select>
+	
+	<update id="signupupdateok" parameterType="com.beans.coffee.dto.RegisterDto">
+	UPDATE REGISTER SET
+	PASSWORD=#{PASSWORD},FULLNAME=#{FULLNAME},ADDRESS=#{ADDRESS},PHONENUMBER=#{PHONENUMBER}
+	WHERE EMAIL=#{EMAIL}
+	</update>
+	
+	<delete id="deleteregister" parameterType="com.beans.coffee.dto.RegisterDto">
+	DELETE FROM REGISTER
+	WHERE EMAIL=#{EMAIL} AND PASSWORD=#{PASSWORD}
+	</delete>
+	
+	<select id="idcheck" resultType="String" parameterType="com.beans.coffee.dto.RegisterDto">
+	SELECT EMAIL FROM REGISTER
+	WHERE EMAIL = #{EMAIL}
+	</select>
+	
+</mapper>

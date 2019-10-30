@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<servers>
+  <server auto-publish-setting="2" auto-publish-time="1" configuration-id="/Servers/springtest-config" deployDir="wtpwebapps" hostname="localhost" id="springtest" name="fileuploadboard" runtime-id="Apache Tomcat v9.0" server-type="org.eclipse.jst.server.tomcat.90" server-type-id="org.eclipse.jst.server.tomcat.90" start-timeout="45" stop-timeout="15" testEnvironment="true" timestamp="7">
+    <list key="modules" value0="FileUploadBoard::org.eclipse.jst.jee.server:FileUploadBoard::jst.web::2.5" value1="CoffeeBeans::org.eclipse.jst.jee.server:CoffeeBeans::jst.web::2.5"/>
+  </server>
+  <server auto-publish-setting="2" auto-publish-time="1" configuration-id="/Servers/coffeebeans for project-config" deployDir="wtpwebapps" hostname="172.16.144.22" id="coffeebeans for project" name="coffeebeans for project" runtime-id="Apache Tomcat v9.0" server-type="org.eclipse.jst.server.tomcat.90" server-type-id="org.eclipse.jst.server.tomcat.90" start-timeout="45" stop-timeout="15" testEnvironment="true" timestamp="4">
+    <list key="modules" value0="CoffeeBeans::org.eclipse.jst.jee.server:CoffeeBeans::jst.web::2.5"/>
+  </server>
+  <server auto-publish-setting="2" auto-publish-time="1" configuration-id="/Servers/testserver-config" deployDir="wtpwebapps" hostname="localhost" id="testserver" name="testserver" runtime-id="Apache Tomcat v9.0 (6)" server-type="org.eclipse.jst.server.tomcat.90" server-type-id="org.eclipse.jst.server.tomcat.90" start-timeout="45" stop-timeout="15" testEnvironment="true" timestamp="3">
+    <list key="modules" value0="CoffeeBeans::org.eclipse.jst.jee.server:CoffeeBeans::jst.web::2.5"/>
+  </server>
+  <server auto-publish-setting="2" auto-publish-time="1" configuration-id="/Servers/coffeebeansnotebook-config" deployDir="wtpwebapps" hostname="192.168.243.162" id="coffeebeansnotebook" name="coffeebeansnotebook" runtime-id="Apache Tomcat v9.0 (8)" server-type="org.eclipse.jst.server.tomcat.90" server-type-id="org.eclipse.jst.server.tomcat.90" start-timeout="45" stop-timeout="15" testEnvironment="true" timestamp="3">
+    <list key="modules" value0="CoffeeBeans::org.eclipse.jst.jee.server:CoffeeBeans::jst.web::2.5"/>
+  </server>
+</servers>

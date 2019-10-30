@@ -1,0 +1,84 @@
+package com.beans.coffee.controller;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.beans.coffee.dto.BbsDto;
+import com.beans.coffee.dto.BbsFileDto;
+import com.beans.coffee.dto.CommentsDto;
+import com.beans.coffee.service.BbsService;
+import com.beans.coffee.service.RegisterService;
+
+@Controller
+public class HomeController {
+
+	@Autowired
+	RegisterService registerservice;
+
+	@Autowired
+	BbsService bbsservice;
+
+	@Autowired
+	AdminBoardViewController adminboardviewcontroller;
+
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String home(HttpServletRequest req) {
+		adminboardviewcontroller.board2(req);
+		
+		String BBSID = null;
+
+		BbsDto maxviewcountcontent = null;
+		maxviewcountcontent = bbsservice.maxviewcountcontent();
+		req.setAttribute("maxcontent", maxviewcountcontent);
+
+		if (maxviewcountcontent != null) {
+			BbsFileDto maxviewcountfile = null;
+			BBSID = maxviewcountcontent.getBBSID();
+			maxviewcountfile = bbsservice.maxviewcountfile(BBSID);
+			req.setAttribute("maxfile", maxviewcountfile);
+		} else {
+			return "index";
+		}
+
+		BbsDto recentcontent = null;
+		recentcontent = bbsservice.recentcontent();
+		req.setAttribute("recentcontent", recentcontent);
+
+		if (recentcontent != null) {
+			BbsFileDto recentfile = null;
+			BBSID = recentcontent.getBBSID();
+			recentfile = bbsservice.recentfile(BBSID);
+			req.setAttribute("recentfile", recentfile);
+		} else {
+			return "index";
+		}
+		
+		BBSID = bbsservice.Maxcountcomments();
+		
+		BbsDto MaxcountcommentsBbs = null;
+		
+		if(BBSID != null) {
+			MaxcountcommentsBbs = bbsservice.MaxcountcommentsBbs(BBSID);
+			req.setAttribute("MaxcountcommentsBbs", MaxcountcommentsBbs);
+		} else {
+			return "index";
+		}
+		
+		if(MaxcountcommentsBbs != null) {
+			BbsFileDto Maxcountcommentsfile = null;
+			BBSID = MaxcountcommentsBbs.getBBSID();
+			Maxcountcommentsfile = bbsservice.Maxcountcommentsfile(BBSID);
+			req.setAttribute("Maxcountcommentsfile", Maxcountcommentsfile);
+		}
+		
+		CommentsDto Countcomments = null;
+		Countcomments = bbsservice.Countcomments(BBSID);
+		req.setAttribute("Countcomments", Countcomments);
+		
+		return "index";
+	}
+}

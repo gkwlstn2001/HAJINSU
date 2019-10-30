@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.beans.coffee.dao.BbsDao">
+ 
+	<insert id="bbsdtoAdd" parameterType="com.beans.coffee.dto.BbsDto">
+	INSERT INTO BBS (
+	ADMIN,REGION,SCORE,BBSID,WRITEDATE,VIEWSCOUNT,EMAIL,TITLE,CONTENT)
+	VALUES (
+	#{ADMIN},#{REGION},#{SCORE},BBSID.NEXTVAL,SYSDATE,0,
+	#{EMAIL},#{TITLE},#{CONTENT})
+	</insert>
+	
+	<insert id="bbsfiledtoAdd" parameterType="com.beans.coffee.dto.BbsFileDto">
+	INSERT INTO BBS_FILE (
+	FILEID,BBSID,ORIGINALFILENAME,SAVEFILENAME)
+	VALUES
+	(FILEID.NEXTVAL,(SELECT BBSID FROM BBS WHERE WRITEDATE = (SELECT MAX(WRITEDATE) FROM BBS)),
+	#{ORIGINALFILENAME},#{SAVEFILENAME})
+	</insert>
+	
+	<select id="bbsview" resultType="com.beans.coffee.dto.BbsDto">
+	SELECT ADMIN,REGION,SCORE,BBSID,WRITEDATE,VIEWSCOUNT,EMAIL,SUBSTR(TITLE,1,21) AS TITLE,SUBSTR(CONTENT,1,102) AS CONTENT
+	FROM BBS
+	WHERE ADMIN='NORMAL' 
+	ORDER BY WRITEDATE DESC
+	</select>
+	
+	<select id="bbsnoticeview" resultType="com.beans.coffee.dto.BbsDto">
+	SELECT ADMIN,REGION,SCORE,BBSID,WRITEDATE,VIEWSCOUNT,EMAIL,SUBSTR(TITLE,1,21) AS TITLE,SUBSTR(CONTENT,1,102) AS CONTENT
+	FROM BBS 
+	WHERE ADMIN='ADMINISTRATION' 
+	ORDER BY WRITEDATE DESC
+	</select>
+	
+	<select id="selectbbsid" resultType="com.beans.coffee.dto.BbsFileDto">
+	SELECT DISTINCT(BBS_FILE.BBSID) 
+	FROM BBS, BBS_FILE 
+	WHERE BBS.BBSID=BBS_FILE.BBSID AND BBS.ADMIN='NORMAL'
+	ORDER BY BBSID DESC
+	</select>
+	
+	<select id="selectnoticebbsid" resultType="com.beans.coffee.dto.BbsFileDto">
+	SELECT DISTINCT(BBS_FILE.BBSID) 
+	FROM BBS, BBS_FILE 
+	WHERE BBS.BBSID=BBS_FILE.BBSID AND BBS.ADMIN='ADMINISTRATION'
+	ORDER BY BBSID DESC
+	</select>
+	
+	<select id="bbsview2" resultType="com.beans.coffee.dto.BbsFileDto" parameterType="com.beans.coffee.dto.BbsFileDto">
+	SELECT BBSID,SUBSTR(SAVEFILENAME,INSTR(SAVEFILENAME,'UPLOAD/'),200) AS SAVEFILENAME
+	FROM BBS_FILE
+	WHERE FILEID = (SELECT MIN(FILEID) FROM BBS_FILE WHERE BBSID = #{BBSID})
+	</select>
+	
+	<select id="bbsnoticeview2" resultType="com.beans.coffee.dto.BbsFileDto" parameterType="com.beans.coffee.dto.BbsFileDto">
+	SELECT BBSID,SUBSTR(SAVEFILENAME,INSTR(SAVEFILENAME,'UPLOAD/'),200) AS SAVEFILENAME
+	FROM BBS_FILE
+	WHERE FILEID = (SELECT MIN(FILEID) FROM BBS_FILE WHERE BBSID = #{BBSID})
+	</select>
+	
+	<update id="viewcountup" parameterType="String">
+	UPDATE BBS SET VIEWSCOUNT = VIEWSCOUNT + 1 WHERE BBSID=#{BBSID}
+	</update>
+	
+	<select id="boardview" resultType="com.beans.coffee.dto.BbsDto" parameterType="String">
+	SELECT * FROM BBS WHERE BBSID=#{BBSID}
+	</select>
+	
+	<select id="boardfileview" resultType="com.beans.coffee.dto.BbsFileDto" parameterType="String">
+	SELECT FILEID,BBSID,ORIGINALFILENAME,SUBSTR(SAVEFILENAME,INSTR(SAVEFILENAME,'UPLOAD/'),200) AS SAVEFILENAME
+	FROM BBS_FILE
+	WHERE BBSID=#{BBSID}
+	</select>
+	
+	<update id="bbsdtoUpdate" parameterType="com.beans.coffee.dto.BbsDto">
+	UPDATE BBS SET
+	ADMIN=#{ADMIN},REGION=#{REGION},
+	SCORE=#{SCORE},BBSID=#{BBSID},WRITEDATE=SYSDATE,VIEWSCOUNT=0,
+	EMAIL=#{EMAIL},TITLE=#{TITLE},CONTENT=#{CONTENT}
+	WHERE BBSID=#{BBSID}
+	</update>
+	
+	<update id="bbsfiledtoUpdate" parameterType="com.beans.coffee.dto.BbsFileDto">
+	UPDATE BBS_FILE SET
+	ORIGINALFILENAME=#{ORIGINALFILENAME},SAVEFILENAME=#{SAVEFILENAME}
+	WHERE FILEID=#{FILEID} AND BBSID=#{BBSID}
+	</update>
+	
+	<delete id="deletecontent" parameterType="String">
+	DELETE FROM BBS
+	WHERE BBSID=#{BBSID}
+	</delete>
+	
+	<delete id="deletefile" parameterType="String">
+	DELETE FROM BBS_FILE
+	WHERE BBSID=#{BBSID}
+	</delete>
+	
+	<select id="maxviewcountcontent" resultType="com.beans.coffee.dto.BbsDto">
+	SELECT ADMIN,REGION,SCORE,BBSID,WRITEDATE,VIEWSCOUNT,EMAIL,SUBSTR(TITLE,1,21) AS TITLE,SUBSTR(CONTENT,1,117) AS CONTENT
+	FROM BBS
+	WHERE BBSID = (SELECT MIN(BBSID) FROM BBS WHERE ADMIN='NORMAL' AND VIEWSCOUNT = (SELECT MAX(VIEWSCOUNT) FROM BBS WHERE ADMIN='NORMAL'))
+	</select>
+	
+	<select id="maxviewcountfile" resultType="com.beans.coffee.dto.BbsFileDto" parameterType="String">
+	SELECT BBSID,SUBSTR(SAVEFILENAME,INSTR(SAVEFILENAME,'UPLOAD/'),200) AS SAVEFILENAME
+	FROM BBS_FILE
+	WHERE BBSID=#{BBSID} AND FILEID = (SELECT MIN(FILEID) FROM BBS_FILE WHERE BBSID = #{BBSID})
+	</select>
+	
+	<select id="recentcontent" resultType="com.beans.coffee.dto.BbsDto">
+	SELECT ADMIN,REGION,SCORE,BBSID,WRITEDATE,VIEWSCOUNT,EMAIL,SUBSTR(TITLE,1,21) AS TITLE,SUBSTR(CONTENT,1,117) AS CONTENT
+ 	FROM BBS
+ 	WHERE BBSID = (SELECT MAX(BBSID) FROM BBS WHERE WRITEDATE = (SELECT MAX(WRITEDATE) FROM BBS WHERE ADMIN='NORMAL'))
+	</select>
+	
+	<select id="recentfile" resultType="com.beans.coffee.dto.BbsFileDto" parameterType="String">
+	SELECT BBSID,SUBSTR(SAVEFILENAME,INSTR(SAVEFILENAME,'UPLOAD/'),200) AS SAVEFILENAME
+	FROM BBS_FILE
+	WHERE BBSID=#{BBSID} AND FILEID = (SELECT MIN(FILEID) FROM BBS_FILE WHERE BBSID = #{BBSID})
+	</select>
+	
+	<insert id="mapok" parameterType="com.beans.coffee.dto.MapDto">
+	INSERT INTO MAP (MAPID,BBSID,LATITUDE,LONGITUDE) VALUES
+	(MAPID.NEXTVAL,(SELECT BBSID FROM BBS WHERE WRITEDATE = (SELECT MAX(WRITEDATE) FROM BBS)),#{LATITUDE},#{LONGITUDE})
+	</insert>
+	
+	<select id="map" resultType="com.beans.coffee.dto.MapDto" parameterType="String">
+	SELECT *
+	FROM MAP
+	WHERE BBSID=#{BBSID}
+	</select>
+	
+	<update id="mapok2" parameterType="com.beans.coffee.dto.MapDto">
+	UPDATE MAP SET
+	LATITUDE=#{LATITUDE},LONGITUDE=#{LONGITUDE}
+	WHERE BBSID=#{BBSID}
+	</update>
+	
+	<delete id="deletemap" parameterType="String">
+	DELETE FROM MAP
+	WHERE BBSID=#{BBSID}
+	</delete>
+	
+	<select id="allmap" resultType="com.beans.coffee.dto.MapDto">
+	SELECT * FROM MAP
+	</select>
+	
+	<delete id="deletebbs" parameterType="com.beans.coffee.dto.RegisterDto">
+	DELETE FROM BBS
+	WHERE EMAIL=#{EMAIL}
+	</delete>
+	
+	<delete id="deletefiles" parameterType="com.beans.coffee.dto.RegisterDto">
+	DELETE FROM BBS_FILE
+	WHERE BBS_FILE.BBSID IN (SELECT DISTINCT(BBS.BBSID) FROM BBS, BBS_FILE WHERE BBS.BBSID=BBS_FILE.BBSID AND EMAIL=#{EMAIL})
+	</delete>
+	
+	<delete id="deletemaps" parameterType="com.beans.coffee.dto.RegisterDto">
+	DELETE FROM MAP
+	WHERE MAP.BBSID IN (SELECT BBS.BBSID FROM BBS, MAP WHERE BBS.BBSID=MAP.BBSID AND EMAIL=#{EMAIL})
+	</delete>
+	
+	<delete id="deletecomments" parameterType="com.beans.coffee.dto.RegisterDto">
+	DELETE FROM COMMENTS
+	WHERE COMMENTS.BBSID IN (SELECT BBS.BBSID FROM BBS WHERE EMAIL=#{EMAIL})
+	</delete>
+	
+	<select id="boardsearch" resultType="com.beans.coffee.dto.BbsDto" parameterType="com.beans.coffee.dto.BbsDto">
+	SELECT *
+	FROM BBS
+	WHERE TITLE LIKE '%' || #{VIEWSCOUNT} || '%' 
+	OR CONTENT LIKE '%' || #{VIEWSCOUNT} || '%' 
+	OR EMAIL=#{VIEWSCOUNT}
+	</select>
+	
+	<select id="searchthumbnail" parameterType="String" resultType="com.beans.coffee.dto.BbsFileDto">
+	SELECT BBSID,SUBSTR(SAVEFILENAME,INSTR(SAVEFILENAME,'UPLOAD/'),200) AS SAVEFILENAME
+	FROM BBS_FILE
+	WHERE FILEID = (SELECT MIN(FILEID) FROM BBS_FILE WHERE BBSID = #{BBSID})
+	</select>
+	
+	<select id="Maxcountcomments" resultType="String">
+	SELECT BBSID
+	FROM BBS
+	WHERE <![CDATA[ROWNUM<=1]]> AND BBSID IN (SELECT BBSID
+	FROM COMMENTS
+	GROUP BY BBSID
+	HAVING COUNT(COMMENTS.BBSID) = (SELECT MAX(COUNT(COMMENTS.BBSID)) FROM BBS,COMMENTS WHERE BBS.BBSID=COMMENTS.BBSID AND ADMIN='NORMAL' GROUP BY COMMENTS.BBSID))
+	</select>
+	
+	<select id="MaxcountcommentsBbs" resultType="com.beans.coffee.dto.BbsDto" parameterType="String">
+	SELECT ADMIN,REGION,SCORE,BBSID,WRITEDATE,VIEWSCOUNT,EMAIL,SUBSTR(TITLE,1,21) AS TITLE,SUBSTR(CONTENT,1,117) AS CONTENT
+	FROM BBS 
+	WHERE BBSID = #{BBSID}
+	</select>
+	
+	<select id="Maxcountcommentsfile" resultType="com.beans.coffee.dto.BbsFileDto" parameterType="String">
+	SELECT BBSID,SUBSTR(SAVEFILENAME,INSTR(SAVEFILENAME,'UPLOAD/'),200) AS SAVEFILENAME
+	FROM BBS_FILE
+	WHERE BBSID=#{BBSID} AND FILEID = (SELECT MIN(FILEID) FROM BBS_FILE WHERE BBSID = #{BBSID})
+	</select>
+	
+	<select id="Countcomments" resultType="com.beans.coffee.dto.CommentsDto" parameterType="String">
+	SELECT COUNT(*) AS COMMENTS
+	FROM COMMENTS
+	WHERE BBSID=#{BBSID}
+	</select>
+	
+	<delete id="deletecommmentsbbs" parameterType="String">
+	DELETE FROM COMMENTS
+	WHERE BBSID=#{BBSID}
+	</delete>
+	
+</mapper>

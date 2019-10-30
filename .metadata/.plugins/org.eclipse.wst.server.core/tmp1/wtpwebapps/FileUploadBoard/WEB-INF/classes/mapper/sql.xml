@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.test.spring.dao.RegisterDao">
+	
+	<insert id="Registerok" parameterType="com.test.spring.dto.MemberDto">
+	INSERT INTO MEMBER (ID,PW) VALUES (#{ID},#{PW})
+	</insert>
+	
+	<select id="loginok" parameterType="com.test.spring.dto.MemberDto" resultType="String">
+	SELECT PW
+	FROM MEMBER
+	WHERE ID=#{ID} AND PW=#{PW}
+	</select>
+	
+</mapper>

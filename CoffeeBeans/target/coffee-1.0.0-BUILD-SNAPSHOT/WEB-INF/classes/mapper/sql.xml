@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.beans.coffee.dao.RegisterDao">
+
+	<insert id="RegisterAdd" parameterType="registerdto">
+    INSERT INTO REGISTER (
+	    EMAIL,PASSWORD,FULLNAME,ADDRESS,PHONENUMBER)
+	VALUES (
+		#{EMAIL},#{PASSWORD},#{FULLNAME},#{ADDRESS},#{PHONENUMBER}
+	)
+    </insert>
+    
+    <select id="registerLogin" resultType="String" parameterType = "HashMap"> 
+	SELECT PASSWORD FROM REGISTER 
+	WHERE EMAIL = #{EMAIL} AND PASSWORD = #{PASSWORD}
+	</select>
+</mapper>

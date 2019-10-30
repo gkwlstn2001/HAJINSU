@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;CoffeeBeans/src/main/webapp/WEB-INF/views/voc.jsp&apos; to &apos;vocwrite.jsp&apos;" description="Rename resource &apos;voc.jsp&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/main/webapp/WEB-INF/views/voc.jsp" name="vocwrite.jsp" stamp="1571555002614" updateReferences="true"/>
+</session>
